@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Soal Informatika - Kelas 8</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f5f9;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Kustomisasi scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Style untuk opsi jawaban */
+        .option-box {
+            transition: all 0.2s ease;
+        }
+        .option-box.selected {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+        .radio-circle {
+            transition: all 0.2s ease;
+        }
+        .option-box.selected .radio-circle {
+            border-color: #2563eb;
+            background-color: #2563eb;
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        /* Animasi Modal Navigasi */
+        #navModal {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .modal-open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .modal-closed {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Warna khusus dari desain */
+        .bg-header { background-color: #2b3582; }
+        .bg-timer { background-color: #1e2661; }
+        .btn-green { background-color: #21c45d; }
+        .btn-blue { background-color: #1d4ed8; }
+        .btn-dark { background-color: #1a2035; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: LANDING PAGE (Mulai / Riwayat)         -->
+    <!-- ============================================== -->
+    <div id="landingView" class="flex-1 flex flex-col w-full relative z-10 bg-white">
+        <!-- Header Landing -->
+        <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wider">Mata Pelajaran: Informatika</h1>
+            <a href="menu.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Kembali ke Menu</a>
+        </header>
+
+        <main class="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-2xl mx-auto w-full">
+            <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                <i class="fas fa-laptop-code text-5xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Latihan Soal Informatika Kelas 8</h2>
+            <p class="text-gray-500 mb-8">60 Soal Pilihan Ganda • Waktu: 60 Menit</p>
+
+            <div class="w-full bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 text-left">Status Pengguna:</h3>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mr-4" id="avatarInitial">U</div>
+                    <div class="text-left">
+                        <p class="font-bold text-gray-800" id="landingName">Siswa</p>
+                        <p class="text-sm text-gray-500" id="landingStatus">Belum ada riwayat pengerjaan.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 mt-6">
+                    <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">
+                        Mulai Latihan Baru
+                    </button>
+                    <button id="btnRiwayat" onclick="showHistory()" class="hidden w-full bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-bold py-3 rounded-xl shadow-sm transition-all">
+                        Lihat Nilai Terakhir
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER DI LANDING PAGE -->
+        <footer class="bg-white text-gray-500 text-center py-4 text-xs mt-auto border-t">
+            <p>&copy; 2026 Created by <span class="font-bold" style="color:#4f46e5;">pan</span> & <span class="font-bold" style="color:#4f46e5;">Gemini AI</span>.</p>
+            <p>Hosted with ❤️ on <a href="https://github.com/" style="text-decoration: underline;">GitHub Pages</a>.</p>
+        </footer>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: QUIZ INTERFACE (Mirip Gambar)          -->
+    <!-- ============================================== -->
+    <div id="quizView" class="hidden flex-1 flex-col w-full bg-[#f4f5f9] relative">
+        
+        <!-- HEADER UI APP (Ditambahkan sticky agar saat di scroll ke bawah, timer tetap kelihatan) -->
+        <header class="bg-header text-white px-4 py-3 flex justify-between items-center shadow-md sticky top-0 z-30">
+            <div>
+                <h1 class="font-bold text-lg leading-tight">Informatika Dasar</h1>
+                <div class="text-xs text-gray-300 mt-1 flex items-center gap-2">
+                    <span class="bg-white/20 px-2 py-0.5 rounded text-[10px]">SMP 8</span>
+                    <span id="headerName" class="uppercase truncate max-w-[150px]">Siswa</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-timer px-3 py-1.5 rounded-lg text-center min-w-[70px]">
+                    <div class="text-[9px] text-gray-300 font-semibold tracking-wider">SISA</div>
+                    <div id="timerDisplay" class="text-yellow-400 font-bold text-sm tracking-widest">60:00</div>
+                </div>
+                <button onclick="confirmSubmit()" class="btn-green hover:bg-green-600 w-10 h-10 rounded-lg flex items-center justify-center shadow transition-colors">
+                    <i class="fas fa-check text-white text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- QUESTION CARD AREA -->
+        <main class="flex-1 px-4 py-6 flex flex-col pb-12">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex-1 relative">
+                
+                <!-- Card Header -->
+                <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-5">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 tracking-widest mb-1">PERTANYAAN NO.</p>
+                        <h2 id="qNumber" class="text-4xl font-extrabold text-gray-800">1</h2>
+                    </div>
+                    <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-lg">PG</span>
+                </div>
+
+                <!-- Question Text -->
+                <p id="qText" class="text-gray-700 text-[15px] md:text-lg font-medium leading-relaxed mb-6">
+                    Memuat pertanyaan...
+                </p>
+
+                <!-- Options -->
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- Options injected via JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <div class="relative bg-[#f4f5f9] px-4 py-6 flex justify-between items-center border-t border-gray-200">
+            <button onclick="prevQuestion()" id="btnPrev" class="text-gray-500 font-semibold text-sm px-4 py-3 flex items-center gap-2 hover:text-indigo-600 disabled:opacity-30">
+                <i class="fas fa-arrow-left"></i> Sebelumnya
+            </button>
+            
+            <button onclick="nextQuestion()" id="btnNext" class="btn-blue text-white font-semibold text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:bg-blue-700">
+                Selanjutnya <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Floating Grid Button (Kanan Bawah) -->
+            <button onclick="toggleNav()" class="absolute right-4 -top-6 btn-dark text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-slate-800/20 hover:scale-105 transition-transform">
+                <i class="fas fa-th-large text-xl"></i>
+            </button>
+        </div>
+
+        <!-- FOOTER DI QUIZ PAGE -->
+        <footer class="bg-white text-gray-500 text-center py-4 text-xs mt-auto border-t">
+            <p>&copy; 2026 Created by <span class="font-bold" style="color:#4f46e5;">pan</span> & <span class="font-bold" style="color:#4f46e5;">Gemini AI</span>.</p>
+            <p>Hosted with ❤️ on <a href="https://github.com/" style="text-decoration: underline;">GitHub Pages</a>.</p>
+        </footer>
+
+        <!-- MODAL OVERLAY NAVIGASI -->
+        <div id="navModalBg" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="toggleNav()"></div>
+        <div id="navModal" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl z-50 modal-closed flex flex-col h-[75vh]">
+            <div class="px-6 py-4 border-b flex justify-between items-center shrink-0">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-sm tracking-wide">NAVIGASI SOAL</h3>
+                    <p class="text-xs text-gray-400">Klik nomor untuk pindah</p>
+                </div>
+                <button onclick="toggleNav()" class="text-gray-400 hover:text-gray-700 p-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Grid Container -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="navGrid" class="grid grid-cols-5 gap-3">
+                    <!-- Grid injected via JS -->
+                </div>
+            </div>
+
+            <!-- Legend Bottom -->
+            <div class="p-6 border-t shrink-0 bg-gray-50 rounded-t-3xl mt-auto">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-4 h-4 rounded btn-blue flex-shrink-0"></div>
+                    <span class="text-xs text-gray-600 font-medium">Dijawab</span>
+                </div>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-4 h-4 rounded border-2 border-yellow-400 bg-yellow-50 flex-shrink-0"></div>
+                    <span class="text-xs text-gray-600 font-medium">Sedang Dikerjakan</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded border border-gray-300 bg-white flex-shrink-0"></div>
+                    <span class="text-xs text-gray-600 font-medium">Belum Dijawab</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: RESULT / SCORE PAGE                    -->
+    <!-- ============================================== -->
+    <div id="resultView" class="hidden flex-1 flex-col w-full bg-white relative z-10">
+        <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-center items-center">
+            <h1 class="text-xl font-bold tracking-wider">Hasil Latihan Informatika</h1>
+        </header>
+
+        <main class="flex-1 p-6 max-w-2xl mx-auto w-full">
+            <div class="bg-gray-50 rounded-3xl p-8 text-center shadow-sm border border-gray-100 mb-8">
+                <h2 class="text-gray-500 font-bold mb-2 uppercase tracking-widest text-sm">Nilai Kamu</h2>
+                <div class="text-6xl font-extrabold text-indigo-600 mb-4" id="finalScore">0</div>
+                
+                <div class="flex justify-center gap-8 mt-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-500" id="benarCount">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider">Benar</div>
+                    </div>
+                    <div class="w-px bg-gray-300"></div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-red-500" id="salahCount">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider">Salah</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-gray-800 text-lg mb-4">Analisis Jawaban Salah:</h3>
+            <div id="wrongList" class="space-y-3 mb-8">
+                <!-- Diisi via JS -->
+            </div>
+
+            <div class="flex gap-4 mb-8">
+                <button onclick="startQuiz()" class="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-3 rounded-xl hover:bg-indigo-50 transition-colors">
+                    Coba Lagi
+                </button>
+                <a href="menu.html" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-xl text-center shadow-md hover:bg-indigo-700 transition-colors">
+                    Kembali Menu
+                </a>
+            </div>
+        </main>
+
+        <!-- FOOTER DI RESULT PAGE -->
+        <footer class="bg-white text-gray-500 text-center py-4 text-xs mt-auto border-t">
+            <p>&copy; 2026 Created by <span class="font-bold" style="color:#4f46e5;">pan</span> & <span class="font-bold" style="color:#4f46e5;">Gemini AI</span>.</p>
+            <p>Hosted with ❤️ on <a href="https://github.com/" style="text-decoration: underline;">GitHub Pages</a>.</p>
+        </footer>
+    </div>
+
+    <!-- Peringatan Kustom (Modal Konfirmasi Kirim) -->
+    <div id="customAlert" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-2xl w-80 text-center shadow-2xl scale-95 transition-transform duration-200">
+            <div class="w-16 h-16 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Kumpulkan Jawaban?</h3>
+            <p id="alertMsg" class="text-gray-500 text-sm mb-6">Masih ada soal yang belum dijawab. Yakin ingin mengakhiri?</p>
+            <div class="flex gap-3">
+                <button onclick="closeAlert()" class="flex-1 bg-gray-100 text-gray-700 font-semibold py-2.5 rounded-xl">Batal</button>
+                <button onclick="submitQuiz()" class="flex-1 bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">Kumpulkan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SCRIPT LOGIKA APLIKASI -->
+    <script>
+        // -----------------------------------------
+        // DATABASE SOAL INFORMATIKA (60 SOAL ASLI)
+        // -----------------------------------------
+        const questionsData = [
+            // Berpikir Komputasional
+            { q: "Teknik memecah masalah besar atau kompleks menjadi bagian-bagian kecil yang lebih mudah dikelola disebut...", o: ["Abstraksi", "Dekomposisi", "Pengenalan Pola", "Algoritma"], a: 1 },
+            { q: "Mengabaikan detail yang tidak relevan dan hanya fokus pada informasi penting dari suatu masalah disebut...", o: ["Dekomposisi", "Algoritma", "Abstraksi", "Coding"], a: 2 },
+            { q: "Menentukan langkah-langkah yang logis dan berurutan untuk menyelesaikan suatu masalah disebut...", o: ["Pengenalan pola", "Abstraksi", "Perulangan", "Algoritma"], a: 3 },
+            { q: "Sistem bilangan yang hanya menggunakan dua simbol angka, yaitu 0 dan 1, adalah...", o: ["Desimal", "Oktal", "Heksadesimal", "Biner"], a: 3 },
+            { q: "Bilangan desimal menggunakan basis angka sebanyak...", o: ["2", "8", "10", "16"], a: 2 },
+            { q: "Jika dikonversi, bilangan biner 101 sama dengan bilangan desimal...", o: ["3", "4", "5", "6"], a: 2 },
+            { q: "Kemampuan mengenali kesamaan atau perbedaan karakteristik suatu data untuk membuat prediksi disebut...", o: ["Pengenalan Pola", "Dekomposisi", "Abstraksi", "Debugging"], a: 0 },
+            { q: "Sistem bilangan oktal adalah sistem bilangan yang berbasis...", o: ["2", "8", "10", "16"], a: 1 },
+            { q: "Angka yang digunakan dalam sistem bilangan heksadesimal selain 0-9 adalah huruf...", o: ["A sampai E", "A sampai F", "X sampai Z", "P sampai T"], a: 1 },
+            { q: "Bentuk representasi algoritma menggunakan simbol-simbol grafis disebut...", o: ["Pseudocode", "Flowchart", "Source code", "Blockly"], a: 1 },
+
+            // Teknologi Informasi & Komunikasi (TIK)
+            { q: "Aplikasi pengolah angka yang sering digunakan untuk membuat tabel dan perhitungan otomatis adalah...", o: ["Microsoft Word", "Microsoft PowerPoint", "Microsoft Excel", "Microsoft Publisher"], a: 2 },
+            { q: "Fitur pada Microsoft Word yang digunakan untuk membuat surat masal secara otomatis (misalnya untuk undangan) adalah...", o: ["Page Layout", "Table of Contents", "Mail Merge", "Hyperlink"], a: 2 },
+            { q: "Ekstensi file standar yang dihasilkan oleh aplikasi Microsoft PowerPoint versi 2010 ke atas adalah...", o: [".docx", ".xlsx", ".pptx", ".pdf"], a: 2 },
+            { q: "Untuk membuat daftar isi secara otomatis di Microsoft Word, kita menggunakan fitur...", o: ["Table of Contents", "Insert Table", "Footnote", "Page Number"], a: 0 },
+            { q: "Kombinasi tombol keyboard (shortcut) untuk melakukan perintah 'Copy' dan 'Paste' berturut-turut adalah...", o: ["Ctrl+X dan Ctrl+V", "Ctrl+C dan Ctrl+V", "Ctrl+C dan Ctrl+X", "Ctrl+P dan Ctrl+S"], a: 1 },
+            { q: "Layanan penyimpanan data berbasis internet (cloud storage) yang disediakan oleh Google adalah...", o: ["OneDrive", "iCloud", "Dropbox", "Google Drive"], a: 3 },
+            { q: "Perpindahan animasi antara satu slide ke slide berikutnya dalam presentasi disebut...", o: ["Animation", "Transition", "Slide Show", "Hyperlink"], a: 1 },
+            { q: "Format file gambar yang mendukung latar belakang transparan adalah...", o: [".jpg", ".bmp", ".png", ".pdf"], a: 2 },
+            { q: "Aplikasi web browser yang digunakan untuk berselancar di internet di bawah ini, kecuali...", o: ["Google Chrome", "Mozilla Firefox", "Adobe Photoshop", "Microsoft Edge"], a: 2 },
+            { q: "Alat bawaan sistem operasi Windows yang digunakan untuk mengambil tangkapan layar (screenshot) secara spesifik adalah...", o: ["Snipping Tool", "Task Manager", "Control Panel", "Command Prompt"], a: 0 },
+
+            // Sistem Komputer
+            { q: "Komponen fisik pada komputer yang dapat dilihat dan disentuh disebut...", o: ["Software", "Hardware", "Brainware", "Malware"], a: 1 },
+            { q: "Pengguna komputer atau manusia yang mengoperasikan sistem komputer disebut...", o: ["Hardware", "Software", "Brainware", "Spyware"], a: 2 },
+            { q: "Otak dari sebuah komputer yang bertugas memproses seluruh instruksi adalah...", o: ["RAM", "Motherboard", "CPU (Processor)", "Hardisk"], a: 2 },
+            { q: "Memori penyimpanan sementara pada komputer yang datanya akan hilang jika komputer dimatikan (volatile) adalah...", o: ["ROM", "RAM", "Hardisk", "Flashdisk"], a: 1 },
+            { q: "Bagian dari CPU yang bertugas melakukan operasi perhitungan matematika dan logika adalah...", o: ["Control Unit (CU)", "Register", "ALU (Arithmetic Logic Unit)", "Motherboard"], a: 2 },
+            { q: "Perangkat yang berfungsi untuk memasukkan data atau perintah ke dalam komputer disebut...", o: ["Output device", "Input device", "Storage device", "Processing device"], a: 1 },
+            { q: "Berikut ini yang merupakan contoh perangkat keluaran (Output device) adalah...", o: ["Keyboard dan Mouse", "Monitor dan Printer", "Scanner dan Mikrofon", "Flashdisk dan Hardisk"], a: 1 },
+            { q: "Papan sirkuit utama di dalam komputer tempat berbagai komponen elektronik saling terhubung disebut...", o: ["VGA Card", "Sound Card", "Power Supply", "Motherboard"], a: 3 },
+            { q: "Pada gerbang logika (Logic Gate), gerbang AND akan menghasilkan output '1' (True) hanya jika...", o: ["Semua inputnya bernilai 1", "Salah satu inputnya bernilai 1", "Semua inputnya bernilai 0", "Inputnya berbeda nilai"], a: 0 },
+            { q: "Gerbang logika pembalik, di mana jika inputnya 1 maka outputnya 0 (dan sebaliknya) adalah gerbang...", o: ["AND", "OR", "NOT", "XOR"], a: 2 },
+
+            // Jaringan Komputer & Internet
+            { q: "Jaringan komputer yang mencakup area geografis yang kecil, seperti dalam satu ruangan, gedung, atau sekolah disebut...", o: ["LAN", "MAN", "WAN", "PAN"], a: 0 },
+            { q: "Jaringan komputer yang menghubungkan komputer di seluruh dunia secara global adalah...", o: ["Intranet", "Internet", "LAN", "MAN"], a: 1 },
+            { q: "Topologi jaringan dimana setiap komputer terhubung ke satu perangkat pusat (seperti Hub atau Switch) disebut topologi...", o: ["Bus", "Ring", "Star (Bintang)", "Mesh"], a: 2 },
+            { q: "Topologi jaringan yang menggunakan kabel tunggal memanjang untuk menghubungkan seluruh komputer disebut topologi...", o: ["Star", "Bus", "Ring", "Tree"], a: 1 },
+            { q: "Alamat unik berupa deretan angka yang diberikan pada setiap perangkat yang terhubung ke jaringan internet disebut...", o: ["MAC Address", "Email Address", "IP Address", "Web Address"], a: 2 },
+            { q: "Perusahaan yang menyediakan layanan koneksi internet kepada pelanggan (seperti Indihome, Telkomsel, Biznet) disebut...", o: ["WWW", "HTML", "ISP (Internet Service Provider)", "LAN"], a: 2 },
+            { q: "Proses menentukan jalur terbaik untuk mengirimkan paket data dari satu jaringan ke jaringan lain disebut...", o: ["Switching", "Routing", "Broadcasting", "Ping"], a: 1 },
+            { q: "Perangkat yang berfungsi mengubah sinyal digital menjadi sinyal analog dan sebaliknya adalah...", o: ["Router", "Switch", "Hub", "Modem"], a: 3 },
+            { q: "Protokol keamanan yang digunakan pada website agar data yang dikirimkan terenkripsi ditandai dengan awalan...", o: ["http://", "https://", "ftp://", "www."], a: 1 },
+            { q: "Kabel jaringan yang terbuat dari serat kaca murni dan mampu mentransfer data dengan kecepatan cahaya disebut...", o: ["Coaxial", "UTP", "Fiber Optic", "VGA"], a: 2 },
+
+            // Analisis Data (Ms. Excel)
+            { q: "Pertemuan antara baris dan kolom pada lembar kerja Excel disebut...", o: ["Range", "Cell (Sel)", "Sheet", "Formula"], a: 1 },
+            { q: "Kumpulan dari beberapa sel yang diblok atau dipilih secara bersamaan pada Excel disebut...", o: ["Range", "Row", "Column", "Workbook"], a: 0 },
+            { q: "Dalam Microsoft Excel, Kolom (Column) ditandai dengan...", o: ["Angka (1, 2, 3...)", "Huruf (A, B, C...)", "Simbol (+, -, *)", "Warna"], a: 1 },
+            { q: "Fungsi utama pada Excel untuk menjumlahkan sekumpulan data angka adalah...", o: ["=MAX()", "=MIN()", "=AVERAGE()", "=SUM()"], a: 3 },
+            { q: "Fungsi yang digunakan untuk mencari nilai rata-rata dari suatu range data adalah...", o: ["=SUM()", "=AVERAGE()", "=COUNT()", "=MEDIAN()"], a: 1 },
+            { q: "Fungsi =MAX() pada pengolah angka digunakan untuk...", o: ["Mencari nilai rata-rata", "Mencari nilai terkecil", "Mencari nilai tertinggi", "Menghitung jumlah sel"], a: 2 },
+            { q: "Setiap penulisan rumus (formula) pada Microsoft Excel wajib diawali dengan tanda...", o: ["*", "#", "=", "@"], a: 2 },
+            { q: "Fungsi logika pada Excel yang mengembalikan satu nilai jika kondisi benar dan nilai lain jika salah adalah...", o: ["=VLOOKUP()", "=IF()", "=AND()", "=OR()"], a: 1 },
+            { q: "Fitur pada Excel yang digunakan untuk mengurutkan data dari huruf A ke Z disebut...", o: ["Filter", "Sort A to Z", "Find", "Replace"], a: 1 },
+            { q: "Representasi visual dari data angka di Excel (seperti diagram batang, garis, atau lingkaran) dibuat menggunakan fitur...", o: ["Chart (Grafik)", "Shapes", "SmartArt", "WordArt"], a: 0 },
+
+            // Algoritma & Pemrograman
+            { q: "Bahasa pemrograman visual yang menggunakan blok-blok bergambar seperti puzzle untuk menyusun kode (sangat cocok untuk pemula) adalah...", o: ["Python", "C++", "Java", "Scratch"], a: 3 },
+            { q: "Dalam pemrograman, tempat penyimpanan sementara di dalam memori komputer yang nilainya dapat berubah-ubah disebut...", o: ["Variabel", "Konstanta", "Fungsi", "Operator"], a: 0 },
+            { q: "Tipe data yang digunakan khusus untuk menyimpan bilangan bulat (tanpa pecahan) adalah...", o: ["String", "Float", "Integer", "Boolean"], a: 2 },
+            { q: "Tipe data yang digunakan untuk menyimpan kumpulan teks/huruf adalah...", o: ["Integer", "String", "Boolean", "Float"], a: 1 },
+            { q: "Tipe data Boolean hanya memiliki dua kemungkinan nilai, yaitu...", o: ["Ganjil dan Genap", "Positif dan Negatif", "True (Benar) dan False (Salah)", "Huruf dan Angka"], a: 2 },
+            { q: "Pada simbol Flowchart, bangun ruang berbentuk Oval (Terminator) berfungsi untuk...", o: ["Membaca input", "Memulai atau mengakhiri program", "Proses perhitungan", "Percabangan/Keputusan"], a: 1 },
+            { q: "Simbol Flowchart berbentuk Belah Ketupat (Diamond) digunakan untuk menunjukkan...", o: ["Awal program", "Proses matematika", "Input data", "Percabangan / Keputusan (Decision)"], a: 3 },
+            { q: "Simbol Jajar Genjang dalam Flowchart melambangkan...", o: ["Proses", "Keputusan", "Input atau Output data", "Mulai"], a: 2 },
+            { q: "Struktur algoritma di mana suatu instruksi atau blok kode dijalankan berulang kali selama kondisi terpenuhi disebut...", o: ["Percabangan (If-Else)", "Perulangan (Looping)", "Sekuensial (Berurutan)", "Fungsi"], a: 1 },
+            { q: "Siklus menemukan dan memperbaiki kesalahan (bug) pada program komputer disebut...", o: ["Coding", "Compiling", "Debugging", "Running"], a: 2 },
+
+            // Dampak Sosial Informatika
+            { q: "Tindakan perundungan, ancaman, atau pelecehan yang dilakukan melalui media sosial atau platform digital disebut...", o: ["Cybercrime", "Cyberbullying", "Carding", "Hacking"], a: 1 },
+            { q: "Berita atau informasi bohong yang sengaja disebarkan untuk menipu atau memanipulasi orang disebut...", o: ["Fakta", "Spam", "Hoax", "Scam"], a: 2 },
+            { q: "Jejak data yang kita tinggalkan saat beraktivitas di internet (seperti postingan, like, histori pencarian) disebut...", o: ["Digital footprint (Jejak digital)", "Digital native", "Digital immigrant", "Cloud storage"], a: 0 },
+            { q: "Tindak kejahatan dengan cara mengelabui korban (misal mengirim link palsu) untuk mencuri data pribadi seperti password dan PIN ATM disebut...", o: ["Deface", "DDoS", "Phishing", "Ransomware"], a: 2 },
+            { q: "Hak eksklusif pencipta yang diatur oleh undang-undang untuk melindungi karya ciptaannya (seperti lagu, buku, software) disebut...", o: ["Hak Asasi", "Hak Cipta (Copyright)", "Hak Guna Bangunan", "Hak Paten"], a: 1 },
+            { q: "Contoh sikap yang bijak dalam menggunakan media sosial adalah...", o: ["Membagikan semua informasi pribadi", "Langsung menyebarkan berita tanpa cek fakta", "Menyaring informasi dan berkomentar sopan", "Memakai foto profil orang lain"], a: 2 },
+            { q: "Kejahatan memanipulasi perangkat komputer dengan tujuan mengunci data pengguna dan meminta uang tebusan disebut kejahatan...", o: ["Ransomware", "Phishing", "Spyware", "Adware"], a: 0 },
+            { q: "Apa yang harus kita lakukan jika mendapat pesan WhatsApp berisi link unduhan mencurigakan dari nomor tidak dikenal?", o: ["Langsung klik dan unduh", "Meneruskannya ke grup keluarga", "Mengabaikan dan memblokir nomor tersebut", "Membalas pesan dengan marah"], a: 2 },
+            { q: "Kemampuan masyarakat untuk menemukan, mengevaluasi, dan menggunakan informasi dari teknologi digital secara cerdas disebut...", o: ["Literasi Digital", "Komunikasi Digital", "Keamanan Digital", "Akses Digital"], a: 0 },
+            { q: "Penyebaran karya cipta digital (seperti film atau software bajakan) secara ilegal di internet melanggar Undang-Undang tentang...", o: ["Lalu Lintas", "Hak Cipta dan ITE", "Perlindungan Konsumen", "Pendidikan Nasional"], a: 1 }
+        ];
+
+        // Variabel Global
+        const TOTAL_QUESTIONS = questionsData.length;
+        const QUIZ_DURATION = 60 * 60; // 60 Menit dalam detik
+        let currentQuestion = 0;
+        let answers = new Array(TOTAL_QUESTIONS).fill(null);
+        let timerInterval;
+        let timeRemaining = QUIZ_DURATION;
+        let userName = "Siswa";
+
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cek nama dari local storage
+            let savedName = localStorage.getItem("namaPengguna");
+            if(savedName) {
+                userName = savedName;
+            } 
+            
+            document.getElementById("landingName").innerText = userName;
+            document.getElementById("headerName").innerText = userName;
+            document.getElementById("avatarInitial").innerText = userName.charAt(0).toUpperCase();
+
+            // Cek riwayat Informatika
+            checkHistory();
+        });
+
+        // 1. Logika Halaman Depan & Riwayat
+        function checkHistory() {
+            let history = localStorage.getItem("informatika_history");
+            if (history) {
+                let data = JSON.parse(history);
+                document.getElementById("landingStatus").innerHTML = `Terakhir mengerjakan: <span class="font-bold text-indigo-600">${data.score}</span> / 100`;
+                document.getElementById("btnRiwayat").classList.remove("hidden");
+            }
+        }
+
+        function showHistory() {
+            let history = localStorage.getItem("informatika_history");
+            if (history) {
+                let data = JSON.parse(history);
+                document.getElementById("finalScore").innerText = data.score;
+                document.getElementById("benarCount").innerText = data.benar;
+                document.getElementById("salahCount").innerText = data.salah;
+                
+                // Render jawaban salah dari riwayat
+                let wrongList = document.getElementById("wrongList");
+                wrongList.innerHTML = "";
+                if(data.salahDetail && data.salahDetail.length > 0) {
+                    data.salahDetail.forEach(num => {
+                        wrongList.innerHTML += `<div class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-semibold border border-red-100">Soal Nomor ${num}</div>`;
+                    });
+                } else {
+                    wrongList.innerHTML = `<p class="text-green-500 font-bold">Luar biasa! Tidak ada yang salah.</p>`;
+                }
+
+                switchView('resultView');
+            }
+        }
+
+        // 2. Logika Ujian (Start, Timer, Navigasi)
+        function startQuiz() {
+            // Reset State
+            currentQuestion = 0;
+            answers = new Array(TOTAL_QUESTIONS).fill(null);
+            timeRemaining = QUIZ_DURATION;
+            
+            switchView('quizView');
+            renderQuestion();
+            renderNavGrid();
+            startTimer();
+            // Scroll ke atas setiap mulai
+            window.scrollTo(0, 0);
+        }
+
+        function switchView(viewId) {
+            document.getElementById('landingView').classList.add('hidden');
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultView').classList.add('hidden');
+            
+            document.getElementById(viewId).classList.remove('hidden');
+            document.getElementById(viewId).classList.add('flex');
+        }
+
+        function renderQuestion() {
+            const qData = questionsData[currentQuestion];
+            document.getElementById("qNumber").innerText = currentQuestion + 1;
+            document.getElementById("qText").innerText = qData.q;
+
+            const optsContainer = document.getElementById("optionsContainer");
+            optsContainer.innerHTML = "";
+
+            const labels = ["A", "B", "C", "D"];
+            qData.o.forEach((optText, index) => {
+                const isSelected = answers[currentQuestion] === index;
+                const optHtml = `
+                    <div onclick="selectOption(${index})" class="option-box cursor-pointer border ${isSelected ? 'selected' : 'border-gray-200'} rounded-xl p-4 flex items-center hover:bg-gray-50">
+                        <div class="radio-circle w-5 h-5 rounded-full border-2 ${isSelected ? 'border-blue-600' : 'border-gray-300'} flex-shrink-0 mr-4"></div>
+                        <div class="flex-1">
+                            <span class="font-bold mr-2 text-gray-700">${labels[index]}.</span> 
+                            <span class="text-gray-600 text-sm md:text-base">${optText}</span>
+                        </div>
+                    </div>
+                `;
+                optsContainer.innerHTML += optHtml;
+            });
+
+            // Update Buttons
+            document.getElementById("btnPrev").disabled = currentQuestion === 0;
+            if(currentQuestion === TOTAL_QUESTIONS - 1) {
+                document.getElementById("btnNext").innerHTML = `Selesai <i class="fas fa-check"></i>`;
+                document.getElementById("btnNext").classList.replace("btn-blue", "bg-green-500");
+                document.getElementById("btnNext").onclick = confirmSubmit;
+            } else {
+                document.getElementById("btnNext").innerHTML = `Selanjutnya <i class="fas fa-arrow-right"></i>`;
+                document.getElementById("btnNext").className = "btn-blue text-white font-semibold text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:bg-blue-700";
+                document.getElementById("btnNext").onclick = nextQuestion;
+            }
+
+            renderNavGrid(); // Update grid colors
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            renderQuestion(); // Re-render to show selection
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < TOTAL_QUESTIONS - 1) {
+                currentQuestion++;
+                renderQuestion();
+                // Scroll kembali ke atas saat pindah soal agar langsung baca pertanyaan
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            renderQuestion();
+            toggleNav(); // Tutup modal
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 3. Modal Navigasi Grid
+        function toggleNav() {
+            const modal = document.getElementById("navModal");
+            const bg = document.getElementById("navModalBg");
+            if (modal.classList.contains("modal-closed")) {
+                modal.classList.remove("modal-closed");
+                modal.classList.add("modal-open");
+                bg.classList.remove("hidden");
+                renderNavGrid();
+            } else {
+                modal.classList.remove("modal-open");
+                modal.classList.add("modal-closed");
+                bg.classList.add("hidden");
+            }
+        }
+
+        function renderNavGrid() {
+            const grid = document.getElementById("navGrid");
+            grid.innerHTML = "";
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                let btnClass = "w-full aspect-square rounded-xl font-bold text-sm flex items-center justify-center transition-all ";
+                
+                if (i === currentQuestion) {
+                    // Sedang dikerjakan (Kuning)
+                    btnClass += "border-2 border-yellow-400 bg-yellow-50 text-yellow-700 scale-105 shadow-md";
+                } else if (answers[i] !== null) {
+                    // Sudah dijawab (Biru)
+                    btnClass += "bg-blue-600 text-white shadow hover:bg-blue-700";
+                } else {
+                    // Belum dijawab (Putih border)
+                    btnClass += "bg-white border border-gray-200 text-gray-500 hover:border-blue-400";
+                }
+
+                grid.innerHTML += `<button onclick="jumpToQuestion(${i})" class="${btnClass}">${i + 1}</button>`;
+            }
+        }
+
+        // 4. Timer System
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const display = document.getElementById("timerDisplay");
+            display.innerText = `${m}:${s}`;
+            
+            // Merah jika kurang dari 5 menit
+            if (timeRemaining < 300) {
+                display.classList.remove("text-yellow-400");
+                display.classList.add("text-red-500", "animate-pulse");
+            }
+        }
+
+        // 5. Submit dan Hitung Nilai
+        function confirmSubmit() {
+            const unanswered = answers.filter(a => a === null).length;
+            const alertModal = document.getElementById("customAlert");
+            const alertMsg = document.getElementById("alertMsg");
+
+            if (unanswered > 0) {
+                alertMsg.innerHTML = `Masih ada <b class="text-indigo-600">${unanswered} soal</b> yang belum dijawab. Yakin ingin mengakhiri sekarang?`;
+            } else {
+                alertMsg.innerText = "Kamu sudah menjawab semua soal. Kumpulkan sekarang?";
+            }
+            alertModal.classList.remove("hidden");
+        }
+
+        function closeAlert() {
+            document.getElementById("customAlert").classList.add("hidden");
+        }
+
+        function autoSubmit() {
+            alert("Waktu Habis! Jawaban akan dikumpulkan otomatis.");
+            submitQuiz();
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            closeAlert();
+            
+            let benar = 0;
+            let salahDetail = [];
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                if (answers[i] === questionsData[i].a) {
+                    benar++;
+                } else {
+                    salahDetail.push(i + 1); // Simpan nomor soal yang salah (1-60)
+                }
+            }
+
+            let salah = TOTAL_QUESTIONS - benar;
+            let score = Math.round((benar / TOTAL_QUESTIONS) * 100);
+
+            // Simpan ke local storage dengan key khusus Informatika
+            const historyData = { score, benar, salah, salahDetail };
+            localStorage.setItem("informatika_history", JSON.stringify(historyData));
+
+            // Tampilkan hasil
+            showHistory();
+        }
+    </script>
+</body>
+</html>
