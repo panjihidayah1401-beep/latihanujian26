@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Utama - Latihan Soal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+            /* Efek fade-in saat halaman dimuat */
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Hover efek untuk kartu pelajaran */
+        .card-pelajaran {
+            transition: all 0.3s ease;
+        }
+        .card-pelajaran:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navbar / Header -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-book-reader text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wider">Portal Belajar</h1>
+            </div>
+            <button onclick="keluar()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="hidden sm:inline">Keluar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Konten Utama -->
+    <main class="flex-grow container mx-auto px-6 py-8">
+        
+        <!-- Bagian Sapaan (Nama akan disisipkan di sini oleh JavaScript) -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-8 border-l-4 border-indigo-500">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800" id="teksSapaan">
+                Halo, Memuat nama... <i class="fas fa-spinner fa-spin text-indigo-500 text-xl"></i>
+            </h2>
+            <p class="text-gray-500 mt-2">Pilih mata pelajaran di bawah ini untuk memulai latihan soalmu hari ini.</p>
+        </div>
+
+        <!-- Grid Pilihan Mata Pelajaran -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Kartu IPA -->
+            <a href="ipa.html" class="card-pelajaran bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group cursor-pointer">
+                <div class="h-32 bg-green-500 flex items-center justify-center group-hover:bg-green-600 transition-colors">
+                    <i class="fas fa-flask text-5xl text-white opacity-90"></i>
+                </div>
+                <div class="p-5 flex-grow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">IPA</h3>
+                    <p class="text-gray-500 text-sm">Ilmu Pengetahuan Alam</p>
+                </div>
+                <div class="bg-gray-50 px-5 py-3 border-t flex justify-between items-center">
+                    <span class="text-sm font-semibold text-green-600">Mulai Latihan</span>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-green-600 transition-colors"></i>
+                </div>
+            </a>
+
+            <!-- Kartu PJOK -->
+            <a href="pjok.html" class="card-pelajaran bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group cursor-pointer">
+                <div class="h-32 bg-orange-500 flex items-center justify-center group-hover:bg-orange-600 transition-colors">
+                    <i class="fas fa-running text-5xl text-white opacity-90"></i>
+                </div>
+                <div class="p-5 flex-grow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">PJOK</h3>
+                    <p class="text-gray-500 text-sm">Pend. Jasmani Olahraga & Kesehatan</p>
+                </div>
+                <div class="bg-gray-50 px-5 py-3 border-t flex justify-between items-center">
+                    <span class="text-sm font-semibold text-orange-600">Mulai Latihan</span>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-orange-600 transition-colors"></i>
+                </div>
+            </a>
+
+            <!-- Kartu IPS -->
+            <a href="ips.html" class="card-pelajaran bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group cursor-pointer">
+                <div class="h-32 bg-yellow-600 flex items-center justify-center group-hover:bg-yellow-700 transition-colors">
+                    <i class="fas fa-globe-asia text-5xl text-white opacity-90"></i>
+                </div>
+                <div class="p-5 flex-grow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">IPS</h3>
+                    <p class="text-gray-500 text-sm">Ilmu Pengetahuan Sosial</p>
+                </div>
+                <div class="bg-gray-50 px-5 py-3 border-t flex justify-between items-center">
+                    <span class="text-sm font-semibold text-yellow-600">Mulai Latihan</span>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-yellow-600 transition-colors"></i>
+                </div>
+            </a>
+
+            <!-- Kartu B. Cirebon -->
+            <a href="b_cirebon.html" class="card-pelajaran bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group cursor-pointer">
+                <div class="h-32 bg-red-600 flex items-center justify-center group-hover:bg-red-700 transition-colors">
+                    <i class="fas fa-comments text-5xl text-white opacity-90"></i>
+                </div>
+                <div class="p-5 flex-grow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">B. Cirebon</h3>
+                    <p class="text-gray-500 text-sm">Bahasa Daerah Cirebon</p>
+                </div>
+                <div class="bg-gray-50 px-5 py-3 border-t flex justify-between items-center">
+                    <span class="text-sm font-semibold text-red-600">Mulai Latihan</span>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-red-600 transition-colors"></i>
+                </div>
+            </a>
+
+            <!-- Kartu Informatika -->
+            <a href="informatika.html" class="card-pelajaran bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group cursor-pointer">
+                <div class="h-32 bg-blue-500 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-laptop-code text-5xl text-white opacity-90"></i>
+                </div>
+                <div class="p-5 flex-grow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">Informatika</h3>
+                    <p class="text-gray-500 text-sm">Komputer dan Teknologi</p>
+                </div>
+                <div class="bg-gray-50 px-5 py-3 border-t flex justify-between items-center">
+                    <span class="text-sm font-semibold text-blue-600">Mulai Latihan</span>
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- FOOTER (Sesuai Permintaan) -->
+    <footer class="bg-white text-gray-500 text-center py-4 text-xs mt-auto">
+        <p>&copy; 2026 Created by <span class="font-bold" style="color:#4f46e5;">pan</span> & <span class="font-bold" style="color:#4f46e5;">Gemini AI</span>.</p>
+        <p>Hosted with ❤️ on <a href="https://github.com/" style="text-decoration: underline;">GitHub Pages</a>.</p>
+    </footer>
+
+    <!-- SCRIPT JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Ambil nama yang disimpan dari index.html
+            let namaTersimpan = localStorage.getItem("namaPengguna");
+            let sapaanElement = document.getElementById("teksSapaan");
+
+            // 2. Cek apakah pengguna sudah login (mengisi nama)
+            if (namaTersimpan) {
+                // Jika ada, tampilkan namanya dengan ikon lambaian tangan
+                sapaanElement.innerHTML = `Halo, <span class="text-indigo-600">${namaTersimpan}</span>! <i class="fas fa-hand-sparkles text-yellow-500"></i>`;
+            } else {
+                // Jika belum mengisi nama, paksa kembali ke index.html (sistem keamanan sederhana)
+                sapaanElement.innerText = "Sesi tidak valid. Mengalihkan...";
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 1000);
+            }
+        });
+
+        // Fungsi tombol keluar
+        function keluar() {
+            // Tampilkan konfirmasi ringan
+            if(confirm("Apakah kamu yakin ingin keluar dan mengganti nama?")) {
+                // Hapus nama dari memori browser
+                localStorage.removeItem("namaPengguna");
+                
+                // Efek fade out sebelum pindah
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.4s ease';
+                
+                setTimeout(() => {
+                    // Kembali ke halaman login
+                    window.location.href = "index.html";
+                }, 400);
+            }
+        }
+    </script>
+</body>
+</html>
