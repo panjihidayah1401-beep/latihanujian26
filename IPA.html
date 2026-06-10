@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Soal IPA - Kelas 8</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f5f9;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Kustomisasi scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Style untuk opsi jawaban */
+        .option-box {
+            transition: all 0.2s ease;
+        }
+        .option-box.selected {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+        .radio-circle {
+            transition: all 0.2s ease;
+        }
+        .option-box.selected .radio-circle {
+            border-color: #2563eb;
+            background-color: #2563eb;
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        /* Animasi Modal Navigasi */
+        #navModal {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .modal-open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .modal-closed {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Warna khusus dari desain */
+        .bg-header { background-color: #2b3582; }
+        .bg-timer { background-color: #1e2661; }
+        .btn-green { background-color: #21c45d; }
+        .btn-blue { background-color: #1d4ed8; }
+        .btn-dark { background-color: #1a2035; }
+    </style>
+</head>
+<!-- HAPUS overflow-hidden agar seluruh halaman bisa di-scroll alami -->
+<body class="min-h-screen flex flex-col bg-gray-50">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: LANDING PAGE (Mulai / Riwayat)         -->
+    <!-- ============================================== -->
+    <div id="landingView" class="flex-1 flex flex-col w-full relative z-10 bg-white">
+        <!-- Header Landing -->
+        <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wider">Mata Pelajaran: IPA</h1>
+            <a href="menu.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Kembali ke Menu</a>
+        </header>
+
+        <main class="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-2xl mx-auto w-full">
+            <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                <i class="fas fa-flask text-5xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Latihan Soal IPA Kelas 8</h2>
+            <p class="text-gray-500 mb-8">60 Soal Pilihan Ganda • Waktu: 60 Menit</p>
+
+            <div class="w-full bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 text-left">Status Pengguna:</h3>
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mr-4" id="avatarInitial">U</div>
+                    <div class="text-left">
+                        <p class="font-bold text-gray-800" id="landingName">Siswa</p>
+                        <p class="text-sm text-gray-500" id="landingStatus">Belum ada riwayat pengerjaan.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 mt-6">
+                    <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">
+                        Mulai Latihan Baru
+                    </button>
+                    <button id="btnRiwayat" onclick="showHistory()" class="hidden w-full bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-bold py-3 rounded-xl shadow-sm transition-all">
+                        Lihat Nilai Terakhir
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER DI LANDING PAGE -->
+        <footer class="bg-white text-gray-500 text-center py-4 text-xs mt-auto border-t">
+            <p>&copy; 2026 Created by <span class="font-bold" style="color:#4f46e5;">pan</span> & <span class="font-bold" style="color:#4f46e5;">Gemini AI</span>.</p>
+            <p>Hosted with ❤️ on <a href="https://github.com/" style="text-decoration: underline;">GitHub Pages</a>.</p>
+        </footer>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: QUIZ INTERFACE (Mirip Gambar)          -->
+    <!-- ============================================== -->
+    <div id="quizView" class="hidden flex-1 flex-col w-full bg-[#f4f5f9] relative">
+        
+        <!-- HEADER UI APP (Ditambahkan sticky agar saat di scroll ke bawah, timer tetap kelihatan) -->
+        <header class="bg-header text-white px-4 py-3 flex justify-between items-center shadow-md sticky top-0 z-30">
+            <div>
+                <h1 class="font-bold text-lg leading-tight">Ilmu Pengetahuan Alam</h1>
+                <div class="text-xs text-gray-300 mt-1 flex items-center gap-2">
+                    <span class="bg-white/20 px-2 py-0.5 rounded text-[10px]">SMP 8</span>
+                    <span id="headerName" class="uppercase truncate max-w-[150px]">Siswa</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-timer px-3 py-1.5 rounded-lg text-center min-w-[70px]">
+                    <div class="text-[9px] text-gray-300 font-semibold tracking-wider">SISA</div>
+                    <div id="timerDisplay" class="text-yellow-400 font-bold text-sm tracking-widest">60:00</div>
+                </div>
+                <button onclick="confirmSubmit()" class="btn-green hover:bg-green-600 w-10 h-10 rounded-lg flex items-center justify-center shadow transition-colors">
+                    <i class="fas fa-check text-white text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- QUESTION CARD AREA -->
+        <main class="flex-1 px-4 py-6 flex flex-col pb-12">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex-1 relative">
+                
+                <!-- Card Header -->
+                <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-5">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 tracking-widest mb-1">PERTANYAAN NO.</p>
+                        <h2 id="qNumber" class="text-4xl font-extrabold text-gray-800">1</h2>
+                    </div>
+                    <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-lg">PG</span>
+                </div>
+
+                <!-- Question Text -->
+                <p id="qText" class="text-gray-700 text-[15px] md:text-lg font-medium leading-relaxed mb-6">
+                    Memuat pertanyaan...
+                </p>
+
+                <!-- Options -->
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- Options injected via JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR (Sekarang posisinya ada di bawah konten, harus di-scroll) -->
+        <div class="relative bg-[#f4f5f9] px-4 py-6 flex justify-between items-center mt-auto border-t border-gray-200">
+            <button onclick="prevQuestion()" id="btnPrev" class="text-gray-500 font-semibold text-sm px-4 py-3 flex items-center gap-2 hover:text-indigo-600 disabled:opacity-30">
+                <i class="fas fa-arrow-left"></i> Sebelumnya
+            </button>
+            
+            <button onclick="nextQuestion()" id="btnNext" class="btn-blue text-white font-semibold text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:bg-blue-700">
+                Selanjutnya <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Floating Grid Button (Kanan Bawah) -->
+            <button onclick="toggleNav()" class="absolute right-4 -top-6 btn-dark text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-slate-800/20 hover:scale-105 transition-transform">
+                <i class="fas fa-th-large text-xl"></i>
+            </button>
+        </div>
+
+        <!-- MODAL OVERLAY NAVIGASI -->
+        <div id="navModalBg" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="toggleNav()"></div>
+        <div id="navModal" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl z-50 modal-closed flex flex-col h-[75vh]">
+            <div class="px-6 py-4 border-b flex justify-between items-center shrink-0">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-sm tracking-wide">NAVIGASI SOAL</h3>
+                    <p class="text-xs text-gray-400">Klik nomor untuk pindah</p>
+                </div>
+                <button onclick="toggleNav()" class="text-gray-400 hover:text-gray-700 p-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Grid Container -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="navGrid" class="grid grid-cols-5 gap-3">
+                    <!-- Grid injected via JS -->
+                </div>
+            </div>
+
+            <!-- Legend Bottom -->
+            <div class="p-6 border-t shrink-0 bg-gray-50 rounded-t-3xl mt-auto">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-4 h-4 rounded btn-blue flex-shrink-0"></div>
+                    <span class="text-xs text-gray-600 font-medium">Dijawab</span>
+                </div>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-4 h-4 rounded border-2 border-yellow-400 bg-yellow-50 flex-shrink-0"></div>
+                    <span class="text-xs text-gray-600 font-medium">Sedang Dikerjakan</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded border border-gray-300 bg-white flex-shrink-0"></div>
+                    <span class="text-xs text-gray-600 font-medium">Belum Dijawab</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: RESULT / SCORE PAGE                    -->
+    <!-- ============================================== -->
+    <div id="resultView" class="hidden flex-1 flex-col w-full bg-white relative z-10">
+        <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-center items-center">
+            <h1 class="text-xl font-bold tracking-wider">Hasil Latihan IPA</h1>
+        </header>
+
+        <main class="flex-1 p-6 max-w-2xl mx-auto w-full">
+            <div class="bg-gray-50 rounded-3xl p-8 text-center shadow-sm border border-gray-100 mb-8">
+                <h2 class="text-gray-500 font-bold mb-2 uppercase tracking-widest text-sm">Nilai Kamu</h2>
+                <div class="text-6xl font-extrabold text-indigo-600 mb-4" id="finalScore">0</div>
+                
+                <div class="flex justify-center gap-8 mt-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-500" id="benarCount">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider">Benar</div>
+                    </div>
+                    <div class="w-px bg-gray-300"></div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-red-500" id="salahCount">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider">Salah</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-gray-800 text-lg mb-4">Analisis Jawaban Salah:</h3>
+            <div id="wrongList" class="space-y-3 mb-8">
+                <!-- Diisi via JS -->
+            </div>
+
+            <div class="flex gap-4 mb-8">
+                <button onclick="startQuiz()" class="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-3 rounded-xl hover:bg-indigo-50 transition-colors">
+                    Coba Lagi
+                </button>
+                <a href="menu.html" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-xl text-center shadow-md hover:bg-indigo-700 transition-colors">
+                    Kembali Menu
+                </a>
+            </div>
+        </main>
+
+        <!-- FOOTER DI RESULT PAGE -->
+        <footer class="bg-white text-gray-500 text-center py-4 text-xs mt-auto border-t">
+            <p>&copy; 2026 Created by <span class="font-bold" style="color:#4f46e5;">pan</span> & <span class="font-bold" style="color:#4f46e5;">Gemini AI</span>.</p>
+            <p>Hosted with ❤️ on <a href="https://github.com/" style="text-decoration: underline;">GitHub Pages</a>.</p>
+        </footer>
+    </div>
+
+    <!-- Peringatan Kustom (Modal Konfirmasi Kirim) -->
+    <div id="customAlert" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-2xl w-80 text-center shadow-2xl scale-95 transition-transform duration-200">
+            <div class="w-16 h-16 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Kumpulkan Jawaban?</h3>
+            <p id="alertMsg" class="text-gray-500 text-sm mb-6">Masih ada soal yang belum dijawab. Yakin ingin mengakhiri?</p>
+            <div class="flex gap-3">
+                <button onclick="closeAlert()" class="flex-1 bg-gray-100 text-gray-700 font-semibold py-2.5 rounded-xl">Batal</button>
+                <button onclick="submitQuiz()" class="flex-1 bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">Kumpulkan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SCRIPT LOGIKA APLIKASI -->
+    <script>
+        // -----------------------------------------
+        // DATABASE SOAL IPA (60 SOAL ASLI KELAS 8)
+        // -----------------------------------------
+        const questionsData = [
+            { q: "Ilmu ukur yang mempelajari gerak benda tanpa memperhatikan penyebab gerak disebut...", o: ["Dinamika", "Kinematika", "Statiska", "Mekanika"], a: 1 },
+            { q: "Sebuah mobil bergerak dengan kecepatan 72 km/jam. Jika dinyatakan dalam m/s, kecepatan tersebut adalah...", o: ["15 m/s", "20 m/s", "25 m/s", "30 m/s"], a: 1 },
+            { q: "Gaya yang bekerja pada suatu benda sehingga benda tersebut diam disebut...", o: ["Gaya gesek", "Gaya otot", "Gaya seimbang", "Gaya gravitasi"], a: 2 },
+            { q: "Berdasarkan Hukum I Newton, jika resultan gaya pada benda sama dengan nol, maka benda yang bergerak akan...", o: ["Bergerak makin cepat", "Berhenti seketika", "Bergerak lurus beraturan", "Bergerak melingkar"], a: 2 },
+            { q: "Ketika kita mengerem sepeda, sepeda akan berhenti. Hal ini disebabkan oleh gaya...", o: ["Gaya pegas", "Gaya mesin", "Gaya otot", "Gaya gesek"], a: 3 },
+            { q: "Gaya dorong atau tarikan yang dapat menyebabkan benda bergerak, berhenti, atau berubah arah disebut...", o: ["Usaha", "Gaya", "Energi", "Daya"], a: 1 },
+            { q: "Sebuah balok ditarik dengan gaya 50 N sehingga berpindah sejauh 2 meter searah dengan gaya. Besarnya usaha adalah...", o: ["25 Joule", "50 Joule", "100 Joule", "200 Joule"], a: 2 },
+            { q: "Alat yang digunakan untuk mempermudah melakukan usaha disebut...", o: ["Pesawat rumit", "Pesawat sederhana", "Motor listrik", "Generator"], a: 1 },
+            { q: "Gunting, linggis, dan jungkat-jungkit merupakan contoh tuas jenis ke...", o: ["Pertama", "Kedua", "Ketiga", "Keempat"], a: 0 },
+            { q: "Keuntungan mekanis pada katrol bebas (bergerak) adalah sebesar...", o: ["1", "2", "3", "4"], a: 1 },
+            
+            { q: "Organ tumbuhan yang berfungsi utama sebagai tempat fotosintesis adalah...", o: ["Akar", "Batang", "Daun", "Bunga"], a: 2 },
+            { q: "Jaringan pada tumbuhan yang berfungsi mengangkut air dan mineral dari akar ke daun adalah...", o: ["Floem", "Xilem", "Kambium", "Epidermis"], a: 1 },
+            { q: "Modifikasi daun pada tumbuhan kaktus menjadi duri berfungsi untuk...", o: ["Menyimpan air", "Melindungi dari hewan", "Mengurangi penguapan", "Mempercepat fotosintesis"], a: 2 },
+            { q: "Gerak menutupnya daun putri malu saat disentuh disebut gerak...", o: ["Fotonasti", "Tigmonasti", "Niktinasti", "Termonasti"], a: 1 },
+            { q: "Proses pencernaan makanan secara mekanik di dalam mulut dibantu oleh...", o: ["Gigi dan lidah", "Air liur dan enzim", "Lambung dan usus", "Kerongkongan"], a: 0 },
+            { q: "Enzim ptialin yang terdapat pada air liur berfungsi memecah karbohidrat menjadi...", o: ["Protein", "Lemak", "Glukosa", "Asam amino"], a: 2 },
+            { q: "Pencernaan protein pertama kali terjadi di dalam organ...", o: ["Mulut", "Lambung", "Usus halus", "Usus besar"], a: 1 },
+            { q: "Fungsi utama usus besar dalam sistem pencernaan adalah...", o: ["Menyerap nutrisi", "Membusukkan makanan", "Menyerap sisa air", "Menghasilkan enzim"], a: 2 },
+            { q: "Penyakit peradangan pada umbai cacing (usus buntu) disebut...", o: ["Diare", "Sembelit", "Apendisitis", "Maag"], a: 2 },
+            { q: "Zat aditif yang digunakan sebagai pengawet pada makanan agar tidak cepat basi adalah...", o: ["Monosodium glutamat", "Natrium benzoat", "Tartrazin", "Aspartam"], a: 1 },
+
+            { q: "Zat pewarna alami warna hijau dapat diperoleh dari...", o: ["Kunyit", "Daun suji", "Buah naga", "Wortel"], a: 1 },
+            { q: "Zat pemanis buatan yang memiliki tingkat kemanisan ratusan kali gula pasir adalah...", o: ["Gula merah", "Sorbitol", "Sakarin", "Madu"], a: 2 },
+            { q: "Minuman keras dan alkohol termasuk dalam zat adiktif golongan...", o: ["Stimulan", "Depresan", "Halusinogen", "Antibiotik"], a: 1 },
+            { q: "Komponen darah yang berfungsi untuk mengedarkan oksigen ke seluruh tubuh adalah...", o: ["Plasma darah", "Eritrosit", "Leukosit", "Trombosit"], a: 1 },
+            { q: "Sel darah putih (Leukosit) berfungsi untuk...", o: ["Mengangkut oksigen", "Membekukan darah", "Membunuh kuman", "Menjaga suhu tubuh"], a: 2 },
+            { q: "Proses pembekuan darah pada saat luka dibantu oleh...", o: ["Eritrosit", "Trombosit", "Leukosit", "Plasma"], a: 1 },
+            { q: "Peredaran darah dari jantung menuju paru-paru dan kembali ke jantung disebut peredaran darah...", o: ["Besar", "Kecil", "Tertutup", "Terbuka"], a: 1 },
+            { q: "Pembuluh darah yang membawa darah kaya oksigen dari paru-paru ke jantung adalah...", o: ["Vena pulmonalis", "Arteri pulmonalis", "Aorta", "Vena cava"], a: 0 },
+            { q: "Organ yang berfungsi memompa darah ke seluruh tubuh adalah...", o: ["Paru-paru", "Ginjal", "Jantung", "Hati"], a: 2 },
+            { q: "Penyakit tekanan darah tinggi disebut juga dengan...", o: ["Hipotensi", "Anemia", "Hipertensi", "Hemofilia"], a: 2 },
+
+            { q: "Pertukaran gas oksigen dan karbon dioksida di dalam paru-paru terjadi pada...", o: ["Bronkus", "Trakea", "Alveolus", "Laring"], a: 2 },
+            { q: "Proses menghirup udara pernapasan disebut...", o: ["Inspirasi", "Ekspirasi", "Transpirasi", "Ekskresi"], a: 0 },
+            { q: "Organ pernapasan yang terdapat pita suara di dalamnya adalah...", o: ["Faring", "Laring", "Trakea", "Bronkus"], a: 1 },
+            { q: "Zat sisa metabolisme yang dikeluarkan oleh paru-paru adalah...", o: ["Urine dan keringat", "Karbondioksida dan uap air", "Empedu", "Urea"], a: 1 },
+            { q: "Alat ekskresi manusia yang berfungsi menyaring darah dan menghasilkan urine adalah...", o: ["Hati", "Paru-paru", "Kulit", "Ginjal"], a: 3 },
+            { q: "Selain sebagai indra peraba, kulit juga berfungsi sebagai alat ekskresi yang mengeluarkan...", o: ["Urine", "Keringat", "Empedu", "Karbondioksida"], a: 1 },
+            { q: "Zat pewarna empedu yang memberi warna pada feses dan urine dirombak di dalam organ...", o: ["Hati", "Ginjal", "Usus halus", "Pankreas"], a: 0 },
+            { q: "Banyaknya getaran yang terjadi dalam satu detik disebut...", o: ["Periode", "Amplitudo", "Frekuensi", "Panjang gelombang"], a: 2 },
+            { q: "Satuan frekuensi dalam Sistem Internasional (SI) adalah...", o: ["Joule", "Newton", "Hertz", "Meter"], a: 2 },
+            { q: "Bunyi tidak dapat merambat melalui...", o: ["Udara", "Air", "Besi", "Ruang hampa"], a: 3 },
+
+            { q: "Bunyi yang frekuensinya di atas 20.000 Hz dan dapat didengar oleh kelelawar disebut...", o: ["Infrasonik", "Audiosonik", "Ultrasonik", "Supersonik"], a: 2 },
+            { q: "Gema terjadi karena bunyi mengalami...", o: ["Pembiasan", "Pemantulan", "Perambatan", "Penyerapan"], a: 1 },
+            { q: "Gelombang yang arah rambatnya tegak lurus dengan arah getarannya disebut gelombang...", o: ["Mekanik", "Elektromagnetik", "Transversal", "Longitudinal"], a: 2 },
+            { q: "Cahaya merambat secara...", o: ["Melingkar", "Lurus", "Bisa membelok", "Zig-zag"], a: 1 },
+            { q: "Peristiwa pelangi merupakan bukti bahwa cahaya dapat mengalami...", o: ["Pemantulan", "Penguraian (Dispersi)", "Interferensi", "Difraksi"], a: 1 },
+            { q: "Bayangan yang dibentuk oleh cermin datar selalu bersifat...", o: ["Nyata, terbalik, diperkecil", "Maya, tegak, sama besar", "Nyata, tegak, diperbesar", "Maya, terbalik, sama besar"], a: 1 },
+            { q: "Cermin yang biasa dipasang di tikungan jalan untuk memperluas pandangan adalah cermin...", o: ["Datar", "Cekung", "Cembung", "Silinder"], a: 2 },
+            { q: "Lensa yang digunakan pada kacamata penderita rabun jauh (miopi) adalah...", o: ["Lensa cembung", "Lensa cekung", "Lensa datar", "Lensa ganda"], a: 1 },
+            { q: "Bagian mata yang berfungsi mengatur banyak sedikitnya cahaya yang masuk adalah...", o: ["Kornea", "Lensa mata", "Pupil", "Retina"], a: 2 },
+            { q: "Cacat mata tua dimana mata tidak dapat melihat benda dekat maupun jauh dengan jelas disebut...", o: ["Miopi", "Hipermetropi", "Presbiopi", "Astigmatisme"], a: 2 },
+
+            { q: "Bahan yang dapat ditarik kuat oleh magnet disebut bahan...", o: ["Diamagnetik", "Paramagnetik", "Ferromagnetik", "Elektromagnetik"], a: 2 },
+            { q: "Kutub magnet yang senama jika didekatkan akan...", o: ["Tarik-menarik", "Tolak-menolak", "Diam", "Berputar"], a: 1 },
+            { q: "Hukum yang menyatakan bahwa gaya apung ke atas sama dengan berat zat cair yang dipindahkan adalah Hukum...", o: ["Pascal", "Newton", "Archimedes", "Boyle"], a: 2 },
+            { q: "Alat yang prinsip kerjanya menggunakan Hukum Pascal adalah...", o: ["Kapal selam", "Balon udara", "Dongkrak hidrolik", "Barometer"], a: 2 },
+            { q: "Tekanan hidrostatis dipengaruhi oleh...", o: ["Luas permukaan", "Massa dan volume", "Kedalaman dan massa jenis", "Kecepatan aliran"], a: 2 },
+            { q: "Organel sel yang berfungsi sebagai tempat respirasi sel (penghasil energi) adalah...", o: ["Nukleus", "Ribosom", "Mitokondria", "Badan Golgi"], a: 2 },
+            { q: "Perbedaan sel hewan dan sel tumbuhan adalah sel tumbuhan memiliki...", o: ["Dinding sel dan plastida", "Lisosom dan sentriol", "Mitokondria dan nukleus", "Membran sel dan sitoplasma"], a: 0 },
+            { q: "Kelainan tulang punggung membengkok ke arah samping disebut...", o: ["Kifosis", "Lordosis", "Skoliosis", "Osteoporosis"], a: 2 },
+            { q: "Sendi yang terdapat pada siku dan lutut, yang hanya memungkinkan gerakan ke satu arah disebut...", o: ["Sendi putar", "Sendi engsel", "Sendi peluru", "Sendi pelana"], a: 1 },
+            { q: "Hormon yang mengatur kadar gula darah dalam tubuh manusia dihasilkan oleh...", o: ["Hati", "Ginjal", "Pankreas", "Kelenjar tiroid"], a: 2 }
+        ];
+
+        // Variabel Global
+        const TOTAL_QUESTIONS = questionsData.length;
+        const QUIZ_DURATION = 60 * 60; // 60 Menit dalam detik
+        let currentQuestion = 0;
+        let answers = new Array(TOTAL_QUESTIONS).fill(null);
+        let timerInterval;
+        let timeRemaining = QUIZ_DURATION;
+        let userName = "Siswa";
+
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cek nama dari local storage
+            let savedName = localStorage.getItem("namaPengguna");
+            if(savedName) {
+                userName = savedName;
+            } else {
+                // Jika belum ada nama, arahkan ke index (opsional, untuk keamanan)
+                // window.location.href = "index.html"; 
+            }
+            
+            document.getElementById("landingName").innerText = userName;
+            document.getElementById("headerName").innerText = userName;
+            document.getElementById("avatarInitial").innerText = userName.charAt(0).toUpperCase();
+
+            // Cek riwayat
+            checkHistory();
+        });
+
+        // 1. Logika Halaman Depan & Riwayat
+        function checkHistory() {
+            let history = localStorage.getItem("ipa_history");
+            if (history) {
+                let data = JSON.parse(history);
+                document.getElementById("landingStatus").innerHTML = `Terakhir mengerjakan: <span class="font-bold text-indigo-600">${data.score}</span> / 100`;
+                document.getElementById("btnRiwayat").classList.remove("hidden");
+            }
+        }
+
+        function showHistory() {
+            let history = localStorage.getItem("ipa_history");
+            if (history) {
+                let data = JSON.parse(history);
+                document.getElementById("finalScore").innerText = data.score;
+                document.getElementById("benarCount").innerText = data.benar;
+                document.getElementById("salahCount").innerText = data.salah;
+                
+                // Render jawaban salah dari riwayat
+                let wrongList = document.getElementById("wrongList");
+                wrongList.innerHTML = "";
+                if(data.salahDetail && data.salahDetail.length > 0) {
+                    data.salahDetail.forEach(num => {
+                        wrongList.innerHTML += `<div class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-semibold border border-red-100">Soal Nomor ${num}</div>`;
+                    });
+                } else {
+                    wrongList.innerHTML = `<p class="text-green-500 font-bold">Luar biasa! Tidak ada yang salah.</p>`;
+                }
+
+                switchView('resultView');
+            }
+        }
+
+        // 2. Logika Ujian (Start, Timer, Navigasi)
+        function startQuiz() {
+            // Reset State
+            currentQuestion = 0;
+            answers = new Array(TOTAL_QUESTIONS).fill(null);
+            timeRemaining = QUIZ_DURATION;
+            
+            switchView('quizView');
+            renderQuestion();
+            renderNavGrid();
+            startTimer();
+            // Scroll ke atas setiap mulai
+            window.scrollTo(0, 0);
+        }
+
+        function switchView(viewId) {
+            document.getElementById('landingView').classList.add('hidden');
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultView').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+            document.getElementById(viewId).classList.add('flex');
+        }
+
+        function renderQuestion() {
+            const qData = questionsData[currentQuestion];
+            document.getElementById("qNumber").innerText = currentQuestion + 1;
+            document.getElementById("qText").innerText = qData.q;
+
+            const optsContainer = document.getElementById("optionsContainer");
+            optsContainer.innerHTML = "";
+
+            const labels = ["A", "B", "C", "D"];
+            qData.o.forEach((optText, index) => {
+                const isSelected = answers[currentQuestion] === index;
+                const optHtml = `
+                    <div onclick="selectOption(${index})" class="option-box cursor-pointer border ${isSelected ? 'selected' : 'border-gray-200'} rounded-xl p-4 flex items-center hover:bg-gray-50">
+                        <div class="radio-circle w-5 h-5 rounded-full border-2 ${isSelected ? 'border-blue-600' : 'border-gray-300'} flex-shrink-0 mr-4"></div>
+                        <div class="flex-1">
+                            <span class="font-bold mr-2 text-gray-700">${labels[index]}.</span> 
+                            <span class="text-gray-600 text-sm md:text-base">${optText}</span>
+                        </div>
+                    </div>
+                `;
+                optsContainer.innerHTML += optHtml;
+            });
+
+            // Update Buttons
+            document.getElementById("btnPrev").disabled = currentQuestion === 0;
+            if(currentQuestion === TOTAL_QUESTIONS - 1) {
+                document.getElementById("btnNext").innerHTML = `Selesai <i class="fas fa-check"></i>`;
+                document.getElementById("btnNext").classList.replace("btn-blue", "bg-green-500");
+                document.getElementById("btnNext").onclick = confirmSubmit;
+            } else {
+                document.getElementById("btnNext").innerHTML = `Selanjutnya <i class="fas fa-arrow-right"></i>`;
+                document.getElementById("btnNext").className = "btn-blue text-white font-semibold text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:bg-blue-700";
+                document.getElementById("btnNext").onclick = nextQuestion;
+            }
+
+            renderNavGrid(); // Update grid colors
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            renderQuestion(); // Re-render to show selection
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < TOTAL_QUESTIONS - 1) {
+                currentQuestion++;
+                renderQuestion();
+                // Scroll kembali ke atas saat pindah soal agar langsung baca pertanyaan
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            renderQuestion();
+            toggleNav(); // Tutup modal
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 3. Modal Navigasi Grid (Mirip Gambar 2)
+        function toggleNav() {
+            const modal = document.getElementById("navModal");
+            const bg = document.getElementById("navModalBg");
+            if (modal.classList.contains("modal-closed")) {
+                modal.classList.remove("modal-closed");
+                modal.classList.add("modal-open");
+                bg.classList.remove("hidden");
+                renderNavGrid();
+            } else {
+                modal.classList.remove("modal-open");
+                modal.classList.add("modal-closed");
+                bg.classList.add("hidden");
+            }
+        }
+
+        function renderNavGrid() {
+            const grid = document.getElementById("navGrid");
+            grid.innerHTML = "";
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                let btnClass = "w-full aspect-square rounded-xl font-bold text-sm flex items-center justify-center transition-all ";
+                
+                if (i === currentQuestion) {
+                    // Sedang dikerjakan (Kuning)
+                    btnClass += "border-2 border-yellow-400 bg-yellow-50 text-yellow-700 scale-105 shadow-md";
+                } else if (answers[i] !== null) {
+                    // Sudah dijawab (Biru)
+                    btnClass += "bg-blue-600 text-white shadow hover:bg-blue-700";
+                } else {
+                    // Belum dijawab (Putih border)
+                    btnClass += "bg-white border border-gray-200 text-gray-500 hover:border-blue-400";
+                }
+
+                grid.innerHTML += `<button onclick="jumpToQuestion(${i})" class="${btnClass}">${i + 1}</button>`;
+            }
+        }
+
+        // 4. Timer System
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const display = document.getElementById("timerDisplay");
+            display.innerText = `${m}:${s}`;
+            
+            // Merah jika kurang dari 5 menit
+            if (timeRemaining < 300) {
+                display.classList.remove("text-yellow-400");
+                display.classList.add("text-red-500", "animate-pulse");
+            }
+        }
+
+        // 5. Submit dan Hitung Nilai
+        function confirmSubmit() {
+            const unanswered = answers.filter(a => a === null).length;
+            const alertModal = document.getElementById("customAlert");
+            const alertMsg = document.getElementById("alertMsg");
+
+            if (unanswered > 0) {
+                alertMsg.innerHTML = `Masih ada <b class="text-indigo-600">${unanswered} soal</b> yang belum dijawab. Yakin ingin mengakhiri sekarang?`;
+            } else {
+                alertMsg.innerText = "Kamu sudah menjawab semua soal. Kumpulkan sekarang?";
+            }
+            alertModal.classList.remove("hidden");
+        }
+
+        function closeAlert() {
+            document.getElementById("customAlert").classList.add("hidden");
+        }
+
+        function autoSubmit() {
+            alert("Waktu Habis! Jawaban akan dikumpulkan otomatis.");
+            submitQuiz();
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            closeAlert();
+            
+            let benar = 0;
+            let salahDetail = [];
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                if (answers[i] === questionsData[i].a) {
+                    benar++;
+                } else {
+                    salahDetail.push(i + 1); // Simpan nomor soal yang salah (1-60)
+                }
+            }
+
+            let salah = TOTAL_QUESTIONS - benar;
+            let score = Math.round((benar / TOTAL_QUESTIONS) * 100);
+
+            // Simpan ke local storage
+            const historyData = { score, benar, salah, salahDetail };
+            localStorage.setItem("ipa_history", JSON.stringify(historyData));
+
+            // Tampilkan hasil
+            showHistory();
+        }
+    </script>
+</body>
+</html>
