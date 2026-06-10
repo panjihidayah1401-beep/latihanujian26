@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Latihan Soal</title>
+    
+    <!-- Menggunakan Tailwind CSS untuk desain modern dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Ikon Animasi -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Mengatur font bawaan */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6; /* Warna latar belakang abu-abu terang */
+        }
+
+        /* --- ANIMASI SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out; /* Mulus saat menghilang */
+        }
+
+        .icon-float {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0;
+        }
+
+        /* Keyframes untuk ikon menyebar ke 4 arah berbeda */
+        @keyframes spread-tl {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: translate(-20px, -20px) scale(1.2); }
+            80% { opacity: 1; transform: translate(-100px, -100px) scale(1) rotate(-15deg); }
+            100% { transform: translate(-120px, -120px) scale(0.5); opacity: 0; }
+        }
+        @keyframes spread-tr {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: translate(20px, -20px) scale(1.2); }
+            80% { opacity: 1; transform: translate(100px, -100px) scale(1) rotate(15deg); }
+            100% { transform: translate(120px, -120px) scale(0.5); opacity: 0; }
+        }
+        @keyframes spread-bl {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: translate(-20px, 20px) scale(1.2); }
+            80% { opacity: 1; transform: translate(-100px, 100px) scale(1) rotate(-20deg); }
+            100% { transform: translate(-120px, 120px) scale(0.5); opacity: 0; }
+        }
+        @keyframes spread-br {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: translate(20px, 20px) scale(1.2); }
+            80% { opacity: 1; transform: translate(100px, 100px) scale(1) rotate(20deg); }
+            100% { transform: translate(120px, 120px) scale(0.5); opacity: 0; }
+        }
+
+        .anim-tl { animation: spread-tl 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; color: #3b82f6; } /* Buku - Biru */
+        .anim-tr { animation: spread-tr 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; color: #ef4444; } /* Love - Merah */
+        .anim-bl { animation: spread-bl 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; color: #10b981; } /* Mikroskop - Hijau */
+        .anim-br { animation: spread-br 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; color: #f59e0b; } /* Bola - Orange */
+        
+        /* Animasi text memudar di tengah */
+        @keyframes fade-text {
+            0% { opacity: 0; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0; transform: scale(1); }
+        }
+        .anim-text {
+            animation: fade-text 2s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen relative overflow-hidden">
+
+    <!-- SPLASH SCREEN ANIMATION (Ditampilkan diawal) -->
+    <div id="splash-screen">
+        <div class="relative flex items-center justify-center">
+            <!-- Ikon-ikon yang menyebar -->
+            <i class="fas fa-book icon-float anim-tl"></i>
+            <i class="fas fa-heart icon-float anim-tr"></i>
+            <i class="fas fa-microscope icon-float anim-bl"></i>
+            <i class="fas fa-basketball-ball icon-float anim-br"></i>
+            
+            <!-- Teks di tengah animasi -->
+            <h1 class="text-3xl font-bold text-gray-800 anim-text absolute">Memuat Latihan...</h1>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT (Awalnya disembunyikan pakai opacity-0) -->
+    <div id="main-content" class="flex-grow flex items-center justify-center opacity-0 transition-opacity duration-1000 hidden">
+        
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center transform transition-all hover:scale-105 duration-300">
+            
+            <!-- Ilustrasi Login / Logo -->
+            <div class="w-20 h-20 bg-indigo-100 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user-graduate text-4xl"></i>
+            </div>
+
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Selamat Datang!</h1>
+            <p class="text-gray-500 mb-6 text-sm">Portal Latihan Soal Interaktif. Silakan masukkan nama kamu untuk memulai.</p>
+            
+            <!-- Form Input -->
+            <div class="space-y-4">
+                <div>
+                    <input type="text" id="namaSiswa" placeholder="Nama Lengkap Kamu..." 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+                        autocomplete="off">
+                    <!-- Pesan error (tersembunyi secara default) -->
+                    <p id="error-msg" class="text-red-500 text-xs mt-1 hidden text-left px-2">Nama tidak boleh kosong!</p>
+                </div>
+                
+                <button onclick="masukWeb()" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex justify-center items-center gap-2">
+                    <span>Mulai Belajar</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER COPYRIGHT (Tempelkan ini juga di file html lainnya nanti) -->
+    <footer id="main-footer" class="bg-white text-gray-500 text-center py-4 text-xs shadow-inner hidden opacity-0 transition-opacity duration-1000 mt-auto">
+        <p>&copy; 2026 Created by <span class="font-bold text-indigo-600">pan</span> & <span class="font-bold text-indigo-600">Gemini AI</span>.</p>
+        <p>Hosted with ❤️ on <a href="https://github.com/" class="hover:text-indigo-600 underline">GitHub Pages</a>.</p>
+    </footer>
+
+    <!-- SCRIPT LOGIKA JAVASCRIPT -->
+    <script>
+        // Logika Animasi 2 Detik
+        window.addEventListener('DOMContentLoaded', () => {
+            // Kita atur waktu tunggu persis 2000 ms (2 detik)
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const mainContent = document.getElementById('main-content');
+                const footer = document.getElementById('main-footer');
+
+                // Hilangkan splash screen perlahan
+                splash.style.opacity = '0';
+                
+                // Setelah memudar (0.5 detik), sembunyikan sepenuhnya dan tampilkan form
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.body.classList.remove('overflow-hidden'); // Buka scroll jika perlu
+                    
+                    // Munculkan Form dan Footer
+                    mainContent.classList.remove('hidden');
+                    footer.classList.remove('hidden');
+                    
+                    // Jeda sedikit agar transisi opacity CSS berjalan mulus
+                    setTimeout(() => {
+                        mainContent.classList.remove('opacity-0');
+                        footer.classList.remove('opacity-0');
+                    }, 50);
+                }, 500); 
+                
+            }, 2000); // <-- Waktu 2 Detik Animasi
+        });
+
+        // Logika Tombol Masuk
+        function masukWeb() {
+            let namaInput = document.getElementById("namaSiswa");
+            let errorMsg = document.getElementById("error-msg");
+            let nama = namaInput.value.trim();
+            
+            if (nama !== "") {
+                // Sembunyikan error jika ada
+                errorMsg.classList.add('hidden');
+                namaInput.classList.remove('border-red-500');
+                
+                // Simpan nama dan pindah halaman
+                localStorage.setItem("namaPengguna", nama);
+                
+                // Animasi keluar saat tombol diklik (opsional, agar mulus)
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.5s ease';
+                
+                setTimeout(() => {
+                    window.location.href = "menu.html";
+                }, 500);
+
+            } else {
+                // Tampilkan gaya error (ganti fungsi alert yang kaku)
+                errorMsg.classList.remove('hidden');
+                namaInput.classList.add('border-red-500');
+                
+                // Tambahkan animasi getar pada input
+                namaInput.classList.add('animate-bounce');
+                setTimeout(() => {
+                    namaInput.classList.remove('animate-bounce');
+                }, 1000);
+            }
+        }
+
+        // Jalankan tombol masuk jika pengguna menekan tombol "Enter" di keyboard
+        document.getElementById("namaSiswa").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                masukWeb();
+            }
+        });
+    </script>
+</body>
+</html>
+  
